@@ -18,7 +18,10 @@ int main() {
   float *h_res = new float[width];
 
   FillMatrix(h_A, width, height, 1.0f);
-  FillMatrix(h_vec, width, 0, 2.0f);
+  
+  for (int row = 0; row < width; ++row) {
+    h_vec[row] = row + 1;
+  }
 
   float *A = NULL;
   float *vec = NULL;
@@ -40,7 +43,7 @@ int main() {
   cudaMemcpy(h_res, res, width, cudaMemcpyDeviceToHost);
 
   for (int row = 0; row < width; ++row) {
-    assert(h_res[row] = 2.0f * width);
+    assert(h_res[row] = 50005000.0f);
   }
 
   cudaFree(A);
