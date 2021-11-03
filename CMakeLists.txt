@@ -14,7 +14,7 @@ cuda_add_executable(02-mul runners/02-mul.cu src/KernelMul.cu)
 cuda_add_executable(03-matrix-add runners/03-matrix-add.cu src/KernelMatrixAdd.cu)
 cuda_add_executable(04-matrix-vector-mul runners/04-matrix-vector-mul.cu src/MatrixVectorMul.cu)
 cuda_add_executable(05-scalar-mul runners/05-scalar-mul.cu src/ScalarMulRunner.cu src/ScalarMul.cu src/CommonKernels.cu)
-cuda_add_executable(06-cosine-vector runners/06-cosine-vector.cu src/CosineVector.cu)
+cuda_add_executable(06-cosine-vector runners/06-cosine-vector.cu src/CosineVector.cu src/ScalarMulRunner.cu src/ScalarMul.cu src/CommonKernels.cu)
 cuda_add_executable(07-matrix-mul runners/07-matrix-mul.cu src/MatrixMul.cu)
 cuda_add_executable(08-filter runners/08-filter.cu src/Filter.cu)
 
