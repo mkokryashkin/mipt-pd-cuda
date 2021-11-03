@@ -48,7 +48,7 @@ float ScalarMulSumPlusReduction(int numElements, float* vector1, float* vector2,
   const int blockSizeReduce = (numBlocks + blockSize - 1) / blockSize;
 
   ScalarMulBlock<<<numBlocks, blockSize>>>(numElements, vec1_d, vec2_d, result_d);
-  Reduce<<<1, blockSize, numBlocks * sizeof(float)>>>(result_d, out_d);
+  Reduce<<<blockSizeReduce, blockSize, numBlocks * sizeof(float)>>>(result_d, out_d);
   float result = 0;
   cudaMemcpy(&result, out_d, sizeof(float), cudaMemcpyDeviceToHost);
 
