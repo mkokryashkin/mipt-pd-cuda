@@ -28,15 +28,15 @@ int main() {
   size_t pB = 0;
   size_t pC = 0;
 
-  cudaMallocPitch(&A, &pA, width, height);
-  cudaMallocPitch(&B, &pB, width, height);
-  cudaMallocPitch(&C, &pC, width, height);
+  cudaMallocPitch(&A, &pA, width * sizeof(float), height);
+  cudaMallocPitch(&B, &pB, width * sizeof(float), height);
+  cudaMallocPitch(&C, &pC, width * sizeof(float), height);
 
   for (int row = 0; row < height; ++row) {
     float* rowA = (float*)((char*)A + row * pA);
     float* rowB = (float*)((char*)B + row * pB);
-    cudaMemcpy(rowA, h_A + row * width, width, cudaMemcpyHostToDevice);
-    cudaMemcpy(rowB, h_B + row * width, width, cudaMemcpyHostToDevice);
+    cudaMemcpy(rowA, h_A + row * width, width * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(rowB, h_B + row * width, width * sizeof(float), cudaMemcpyHostToDevice);
   }
 
   dim3 blockSize(256, 256);
@@ -47,7 +47,7 @@ int main() {
 
   for (int row = 0; row < height; ++row) {
     float* rowC = (float*)((char*)C + row * pC);
-    cudaMemcpy(h_C + row * width, rowC, width, cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_C + row * width, rowC, width * sizeof(float), cudaMemcpyDeviceToHost);
   }
 
   for (int row = 0; row < height; ++row) {
