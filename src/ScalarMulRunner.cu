@@ -1,6 +1,7 @@
 #include <ScalarMulRunner.cuh>
 #include <ScalarMul.cuh>
 #include <CommonKernels.cuh>
+#include <stdio.h>
 
 __global__ void Reduce(float* in_data, float* out_data) {
     extern __shared__ float shared_data[];
@@ -48,6 +49,10 @@ float ScalarMulSumPlusReduction(int numElements, float* vector1, float* vector2,
   const int blockSizeReduce = (numBlocks + blockSize - 1) / blockSize;
 
   ScalarMulBlock<<<numBlocks, blockSize>>>(numElements, vec1_d, vec2_d, result_d);
+  cudaMemcpy(vector1, result_d, numBlocks * sizeof(float));
+  for(int i = 0; i < numBlocks; ++i) {
+    printf("%f\n", vector1[i]);
+  }
   Reduce<<<numBlocks, blockSizeReduce, numBlocks * sizeof(float)>>>(result_d, out_d);
   float result = 0;
   cudaMemcpy(&result, out_d, sizeof(float), cudaMemcpyDeviceToHost);
