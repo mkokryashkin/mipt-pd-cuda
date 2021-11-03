@@ -14,12 +14,10 @@ int main() {
   float result = CosineVector(vec_size, vec1, vec2);
   printf("%f\n", result);
   fflush(stdout);
-  //assert(result == 2.0f * (1 << 20));
+  assert(result - 0.707f < 0.001f);
 
-  result = 0  delete[] vec1;
+  delete[] vec1;
   delete[] vec2;
   return 0;
-
-
 }
 
