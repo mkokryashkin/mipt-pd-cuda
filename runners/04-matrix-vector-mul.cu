@@ -18,7 +18,7 @@ int main() {
   float *h_vec = new float[width];
   float *h_res = new float[width];
 
-  FillMatrix(h_A, width, height, 1.0f);
+  FillMatrix(h_A, width, height, 2.0f);
 
   for (int row = 0; row < width; ++row) {
     h_vec[row] = row + 1;
@@ -44,8 +44,7 @@ int main() {
   cudaMemcpy(h_res, res, width * sizeof(float), cudaMemcpyDeviceToHost);
 
   for (int row = 0; row < width; ++row) {
-    printf("%f\n", h_res[row]);
-    //assert(h_res[row] == 50005000.0f);
+    assert(h_res[row] == h_vec[row] * 2.0f);
   }
 
   cudaFree(A);
