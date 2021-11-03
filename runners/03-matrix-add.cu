@@ -1,6 +1,19 @@
 #include <assert.h>
 #include <stdio.h>
+#include <iostream>
+#include <cuda.h>
 #include "KernelMatrixAdd.cuh"
+
+#define checkCudaErrors(val) check( (val), #val, __FILE__, __LINE__)
+
+template<typename T>
+void check(T err, const char* const func, const char* const file, const int line) {
+  if (err != cudaSuccess) {
+    std::cerr << "CUDA error at: " << file << ":" << line << std::endl;
+    std::cerr << cudaGetErrorString(err) << " " << func << std::endl;
+    exit(1);
+  }
+}
 
 void FillMatrix(float* mat, int width, int height, float value) {
   for(int row = 0; row < height; ++row) {
@@ -43,9 +56,9 @@ int main() {
   size_t pB = 0;
   size_t pC = 0;
 
-  cudaMallocPitch(&A, &pA, width * sizeof(float), height);
-  cudaMallocPitch(&B, &pB, width * sizeof(float), height);
-  cudaMallocPitch(&C, &pC, width * sizeof(float), height);
+  checkCudaErrors(cudaMallocPitch(&A, &pA, width * sizeof(float), height));
+  checkCudaErrors(cudaMallocPitch(&B, &pB, width * sizeof(float), height));
+  checkCudaErrors(cudaMallocPitch(&C, &pC, width * sizeof(float), height));
 
   for (int row = 0; row < height; ++row) {
     float* rowA = (float*)((char*)A + row * pA);
