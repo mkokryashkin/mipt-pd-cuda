@@ -1,6 +1,7 @@
 #include <ScalarMulRunner.cuh>
 #include <ScalarMul.cuh>
 #include <CommonKernels.cuh>
+#include <stdio.h>
 
 __global__ void Reduce(float* in_data, float* out_data) {
     extern __shared__ float shared_data[];
