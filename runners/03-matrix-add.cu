@@ -62,7 +62,7 @@ int main() {
   checkCudaErrors(cudaMemcpy2D(A, pA, h_A, width * sizeof(float), width * sizeof(float), height, cudaMemcpyHostToDevice));
   checkCudaErrors(cudaMemcpy2D(B, pB, h_B, width * sizeof(float), width * sizeof(float), height, cudaMemcpyHostToDevice));
 
-  dim3 blockSize(256, 256);
+  dim3 blockSize(32, 32);
   dim3 numBlocks((height + blockSize.x - 1) / blockSize.x, (width + blockSize.y - 1) / blockSize.y);
 
   KernelMatrixAdd<<<numBlocks, blockSize>>>(height, width, pA, pB, pC, A, B, C);
