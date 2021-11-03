@@ -44,7 +44,7 @@ int main() {
   cudaMemcpy(h_res, res, width * sizeof(float), cudaMemcpyDeviceToHost);
 
   for (int row = 0; row < width; ++row) {
-    assert(h_res[row] == h_vec[row] * 2.0f);
+    assert(h_res[row] == 1001000.0f);
   }
 
   cudaFree(A);

@@ -10,7 +10,7 @@ void MatrixVectorMul(int height, int width, float* matrix, float* vector, float*
   for (int i = row; i < height; i += stride_row) {
     float* rowA = matrix + row * width;
     for(int j = col; j < width; j += stride_col) {
-       atomicAdd(&result[j], rowA[j] * vector[j]);
+       atomicAdd(&result[i], rowA[j] * vector[j]);
     }
 	}
 }
