@@ -26,7 +26,41 @@ __global__ void Reduce(float* in_data, float* out_data) {
 
 
 float ScalarMulTwoReductions(int numElements, float* vector1, float* vector2, int blockSize) {
-  return 0.0f;
+  int blockSize = 1024;
+  int numBlocks = (numElements + blockSize - 1) / blockSize;
+
+  float *vec1_d = NULL;
+  float *vec2_d = NULL;
+  float *result_d = NULL;
+  float *reduce1_d = NULL;
+  float *out_d = NULL;
+
+  cudaMalloc(&vec1_d, numElements * sizeof(float));
+  cudaMalloc(&vec2_d, numElements * sizeof(float));
+  cudaMalloc(&result_d, numElements * sizeof(float));
+  cudaMalloc(&reduce1_d, numBlocks * sizeof(float));
+  cudaMalloc(&out_d, sizeof(float));
+
+  cudaMemcpy(vec1_d, vector1, numElements * sizeof(float), cudaMemcpyHostToDevice);
+  cudaMemcpy(vec2_d, vector2, numElements * sizeof(float), cudaMemcpyHostToDevice);
+
+	KernelMul<<<numBlocks, blockSize>>>(numElements, x, y, result);
+	cudaDeviceSynchronize();
+  Reduce<<<numBlocks, blockSize, numElements * sizeof(float)>>>(result_d, reduce1_d);
+	cudaDeviceSynchronize();
+  const int numBlocksReduce = (numBlocks + blockSize - 1) / blockSize;
+  Reduce<<<numBlocksReduce, blockSize, numBlocks * sizeof(float)>>>(reduce1_d, out_d);
+	cudaDeviceSynchronize();
+  float result = 0;
+  cudaMemcpy(&result, out_d, sizeof(float), cudaMemcpyDeviceToHost);
+
+  cudaFree(vec1_d);
+  cudaFree(vec2_d);
+  cudaFree(result_d);
+  cudaFree(reduce1_d);
+  cudaFree(out_d);
+
+  return result;
 }
 
 float ScalarMulSumPlusReduction(int numElements, float* vector1, float* vector2, int blockSize) {
@@ -48,7 +82,9 @@ float ScalarMulSumPlusReduction(int numElements, float* vector1, float* vector2,
   const int blockSizeReduce = (numBlocks + blockSize - 1) / blockSize;
 
   ScalarMulBlock<<<numBlocks, blockSize>>>(numElements, vec1_d, vec2_d, result_d);
+  cudaDeviceSynchronize();
   Reduce<<<blockSizeReduce, blockSize, numBlocks * sizeof(float)>>>(result_d, out_d);
+  cudaDeviceSynchronize();
   float result = 0;
   cudaMemcpy(&result, out_d, sizeof(float), cudaMemcpyDeviceToHost);
 
