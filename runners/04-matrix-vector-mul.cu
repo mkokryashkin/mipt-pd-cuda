@@ -10,8 +10,8 @@ void FillMatrix(float* mat, int width, int height, float value) {
 }
 
 int main() {
-  int width = 10000;
-  int height = 10000;
+  int width = 1000;
+  int height = 1000;
 
   float *h_A = new float[width * height];
   float *h_vec = new float[width];
@@ -34,7 +34,7 @@ int main() {
   cudaMemcpy(A, h_A, width * height * sizeof(float), cudaMemcpyHostToDevice);
   cudaMemcpy(vec, h_vec, width * sizeof(float), cudaMemcpyHostToDevice);
 
-  dim3 blockSize(256, 256);
+  dim3 blockSize(32, 32);
   dim3 numBlocks((height + blockSize.x - 1) / blockSize.x, (width + blockSize.y - 1) / blockSize.y);
 
   MatrixVectorMul<<<numBlocks, blockSize>>>(height, width, A, vec, res);
