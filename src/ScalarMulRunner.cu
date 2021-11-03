@@ -3,11 +3,11 @@
 #include <CommonKernels.cuh>
 #include <stdio.h>
 #include <iostream>
- 
+
 #include <cuda.h>
- 
+
 #define checkCudaErrors(val) check( (val), #val, __FILE__, __LINE__)
- 
+
 template<typename T>
 void check(T err, const char* const func, const char* const file, const int line) {
   if (err != cudaSuccess) {
@@ -63,12 +63,6 @@ float ScalarMulTwoReductions(int numElements, float* vector1, float* vector2, in
   Reduce<<<numBlocks, blockSize, blockSize * sizeof(float)>>>(result_d, reduce1_d);
   checkCudaErrors(cudaPeekAtLastError());
 	cudaDeviceSynchronize();
-
-  cudaMemcpy(vector1, reduce1_d, sizeof(float) * numBlocks, cudaMemcpyDeviceToHost);
-  for(int i = 0; i < numBlocks; ++i) {
-    printf("%f\n", vector1[i]);
-  }
-  fflush(stdout);
   const int numBlocksReduce = (numBlocks + blockSize - 1) / blockSize;
   Reduce<<<numBlocksReduce, blockSize, blockSize * sizeof(float)>>>(reduce1_d, out_d);
 	cudaDeviceSynchronize();
