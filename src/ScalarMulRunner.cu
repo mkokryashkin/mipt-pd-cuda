@@ -60,7 +60,7 @@ float ScalarMulTwoReductions(int numElements, float* vector1, float* vector2, in
 
 	KernelMul<<<numBlocks, blockSize>>>(numElements, vec1_d, vec2_d, result_d);
 	cudaDeviceSynchronize();
-  Reduce<<<numBlocks, blockSize, numElements * sizeof(float)>>>(result_d, reduce1_d);
+  Reduce<<<numBlocks, blockSize, blockSize * sizeof(float)>>>(result_d, reduce1_d);
   checkCudaErrors(cudaPeekAtLastError());
 	cudaDeviceSynchronize();
 
@@ -70,7 +70,7 @@ float ScalarMulTwoReductions(int numElements, float* vector1, float* vector2, in
   }
   fflush(stdout);
   const int numBlocksReduce = (numBlocks + blockSize - 1) / blockSize;
-  Reduce<<<numBlocksReduce, blockSize, numBlocks * sizeof(float)>>>(reduce1_d, out_d);
+  Reduce<<<numBlocksReduce, blockSize, blockSize * sizeof(float)>>>(reduce1_d, out_d);
 	cudaDeviceSynchronize();
   float result = 0;
   cudaMemcpy(&result, out_d, sizeof(float), cudaMemcpyDeviceToHost);
