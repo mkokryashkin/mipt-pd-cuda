@@ -46,15 +46,14 @@ float ScalarMulTwoReductions(int numElements, float* vector1, float* vector2, in
 
 	KernelMul<<<numBlocks, blockSize>>>(numElements, vec1_d, vec2_d, result_d);
 	cudaDeviceSynchronize();
+  Reduce<<<numBlocks, blockSize, numElements * sizeof(float)>>>(result_d, reduce1_d);
+	cudaDeviceSynchronize();
 
-  cudaMemcpy(vector1, result_d, sizeof(float) * numElements, cudaMemcpyDeviceToHost);
-  for(int i = 0; i < numElements; ++i) {
+  cudaMemcpy(vector1, reduce1_d, sizeof(float) * numBlocks, cudaMemcpyDeviceToHost);
+  for(int i = 0; i < numBlocks; ++i) {
     printf("%f\n", vector1[i]);
   }
   fflush(stdout);
-
-  Reduce<<<numBlocks, blockSize, numElements * sizeof(float)>>>(result_d, reduce1_d);
-	cudaDeviceSynchronize();
   const int numBlocksReduce = (numBlocks + blockSize - 1) / blockSize;
   Reduce<<<numBlocksReduce, blockSize, numBlocks * sizeof(float)>>>(reduce1_d, out_d);
 	cudaDeviceSynchronize();
