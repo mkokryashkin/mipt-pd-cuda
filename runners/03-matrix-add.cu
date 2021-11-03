@@ -52,7 +52,7 @@ int main() {
 
   for (int row = 0; row < height; ++row) {
     for(int col = 0; col < width; ++col) {
-      assert(h_C[row * width + col] = 3.0f);
+      assert(h_C[row * width + col] == 3.0f);
     }
   }
 

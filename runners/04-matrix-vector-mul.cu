@@ -18,7 +18,7 @@ int main() {
   float *h_res = new float[width];
 
   FillMatrix(h_A, width, height, 1.0f);
-  
+
   for (int row = 0; row < width; ++row) {
     h_vec[row] = row + 1;
   }
@@ -27,12 +27,12 @@ int main() {
   float *vec = NULL;
   float *res = NULL;
 
-  cudaMalloc(&A, width * height);
-  cudaMalloc(&vec, width);
-  cudaMalloc(&res, width);
+  cudaMalloc(&A, width * height * sizeof(float));
+  cudaMalloc(&vec, width * sizeof(float));
+  cudaMalloc(&res, width * sizeof(float));
 
-  cudaMemcpy(A, h_A, width * height, cudaMemcpyHostToDevice);
-  cudaMemcpy(vec, h_vec, width, cudaMemcpyHostToDevice);
+  cudaMemcpy(A, h_A, width * height * sizeof(float), cudaMemcpyHostToDevice);
+  cudaMemcpy(vec, h_vec, width * sizeof(float), cudaMemcpyHostToDevice);
 
   dim3 blockSize(256, 256);
   dim3 numBlocks((height + blockSize.x - 1) / blockSize.x, (width + blockSize.y - 1) / blockSize.y);
@@ -40,10 +40,10 @@ int main() {
   MatrixVectorMul<<<numBlocks, blockSize>>>(height, width, A, vec, res);
 	cudaDeviceSynchronize();
 
-  cudaMemcpy(h_res, res, width, cudaMemcpyDeviceToHost);
+  cudaMemcpy(h_res, res, width * sizeof(float), cudaMemcpyDeviceToHost);
 
   for (int row = 0; row < width; ++row) {
-    assert(h_res[row] = 50005000.0f);
+    assert(h_res[row] == 50005000.0f);
   }
 
   cudaFree(A);
