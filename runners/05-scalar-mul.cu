@@ -14,6 +14,7 @@ int main() {
 
   float result = ScalarMulSumPlusReduction(vec_size, vec1, vec2, 1024);
   printf("%f\n", result);
+  fflush(stdout);
   assert(result == 2.0f * (1 << 20));
 
   delete[] vec1;
