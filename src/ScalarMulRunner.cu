@@ -1,4 +1,5 @@
 #include <ScalarMulRunner.cuh>
+#include <ScalarMul.cuh>
 
 
 float ScalarMulTwoReductions(int numElements, float* vector1, float* vector2, int blockSize) {
@@ -22,7 +23,6 @@ float ScalarMulSumPlusReduction(int numElements, float* vector1, float* vector2,
   cudaMemcpy(vec2_d, vector2, numElements * sizeof(float), cudaMemcpyHostToDevice);
 
   ScalarMulBlock<<<numBlocks, blockSize>>>(numElements, vec1_d, vec2_d, result_d);
-  numBlocks = numBlocks
   Reduce<<numBlocks, (numBlocks + blockSize - 1) / blockSize>>>(result_d, out_d);
   float result = 0;
   cudaMemcpy(&result, out_d, sizeof(float), cudaMemcpyDeviceToHost);
