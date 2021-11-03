@@ -66,7 +66,7 @@ int main() {
   dim3 numBlocks((height + blockSize.x - 1) / blockSize.x, (width + blockSize.y - 1) / blockSize.y);
 
   KernelMatrixAdd<<<numBlocks, blockSize>>>(height, width, pA, pB, pC, A, B, C);
-	checkCudaErrors(cudaDeviceSynchronize());
+	cudaDeviceSynchronize();
   checkCudaErrors(cudaMemcpy2D(h_C, width * sizeof(float), C, pC, width * sizeof(float), height, cudaMemcpyDeviceToHost));
 
   PrintMatrix(h_C, width, height);
