@@ -17,6 +17,7 @@ __global__ void KernelMatrixAdd(int height, int width, size_t pA, size_t pB, siz
       assert(rowB[j] == 2.0f);
       assert(rowC[j] == 0.0f);
       rowC[j] = 3.0f;//rowA[j] + rowB[j];
+      assert(rowC[j] = 3.0f);
     }
 	}
 }
