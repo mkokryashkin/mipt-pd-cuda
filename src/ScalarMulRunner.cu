@@ -2,6 +2,20 @@
 #include <ScalarMul.cuh>
 #include <CommonKernels.cuh>
 #include <stdio.h>
+#include <iostream>
+ 
+#include <cuda.h>
+ 
+#define checkCudaErrors(val) check( (val), #val, __FILE__, __LINE__)
+ 
+template<typename T>
+void check(T err, const char* const func, const char* const file, const int line) {
+  if (err != cudaSuccess) {
+    std::cerr << "CUDA error at: " << file << ":" << line << std::endl;
+    std::cerr << cudaGetErrorString(err) << " " << func << std::endl;
+    exit(1);
+  }
+}
 
 __global__ void Reduce(float* in_data, float* out_data) {
     extern __shared__ float shared_data[];
@@ -47,6 +61,7 @@ float ScalarMulTwoReductions(int numElements, float* vector1, float* vector2, in
 	KernelMul<<<numBlocks, blockSize>>>(numElements, vec1_d, vec2_d, result_d);
 	cudaDeviceSynchronize();
   Reduce<<<numBlocks, blockSize, numElements * sizeof(float)>>>(result_d, reduce1_d);
+  checkCudaErrors(cudaPeekAtLastError());
 	cudaDeviceSynchronize();
 
   cudaMemcpy(vector1, reduce1_d, sizeof(float) * numBlocks, cudaMemcpyDeviceToHost);
