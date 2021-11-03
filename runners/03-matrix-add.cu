@@ -63,19 +63,19 @@ int main() {
   for (int row = 0; row < height; ++row) {
     float* rowA = (float*)((char*)A + row * pA);
     float* rowB = (float*)((char*)B + row * pB);
-    cudaMemcpy(rowA, h_A + row * width, width * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(rowB, h_B + row * width, width * sizeof(float), cudaMemcpyHostToDevice);
+    checkCudaErrors(cudaMemcpy(rowA, h_A + row * width, width * sizeof(float), cudaMemcpyHostToDevice));
+    checkCudaErrors(cudaMemcpy(rowB, h_B + row * width, width * sizeof(float), cudaMemcpyHostToDevice));
   }
 
   dim3 blockSize(256, 256);
   dim3 numBlocks((height + blockSize.x - 1) / blockSize.x, (width + blockSize.y - 1) / blockSize.y);
 
-  KernelMatrixAdd<<<numBlocks, blockSize>>>(height, width, pA, pB, pC, A, B, C);
-	cudaDeviceSynchronize();
+  checkCudaErrors(KernelMatrixAdd<<<numBlocks, blockSize>>>(height, width, pA, pB, pC, A, B, C));
+	checkCudaErrors(cudaDeviceSynchronize());
 
   for (int row = 0; row < height; ++row) {
     float* rowC = (float*)((char*)C + row * pC);
-    cudaMemcpy(h_C + row * width, rowC, width * sizeof(float), cudaMemcpyDeviceToHost);
+    checkCudaErrors(cudaMemcpy(h_C + row * width, rowC, width * sizeof(float), cudaMemcpyDeviceToHost));
   }
 
   PrintMatrix(h_C, width, height);
@@ -86,9 +86,9 @@ int main() {
     }
   }
 
-  cudaFree(A);
-  cudaFree(B);
-  cudaFree(C);
+  checkCudaErrors(cudaFree(A));
+  checkCudaErrors(cudaFree(B));
+  checkCudaErrors(cudaFree(C));
 
   free(h_A);
   free(h_B);
