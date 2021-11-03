@@ -12,7 +12,7 @@ __global__ void KernelMatrixAdd(int height, int width, size_t pA, size_t pB, siz
     float* rowC = (float*)((char*)result + i * pC);
 
     for(int j = col; j < width; j += stride_col) {
-       rowC[j] = rowA[j] + rowB[j];
+       rowC[j] = 3.0f;//rowA[j] + rowB[j];
     }
 	}
 }

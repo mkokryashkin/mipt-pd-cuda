@@ -70,7 +70,7 @@ int main() {
   dim3 blockSize(256, 256);
   dim3 numBlocks((height + blockSize.x - 1) / blockSize.x, (width + blockSize.y - 1) / blockSize.y);
 
-  checkCudaErrors(KernelMatrixAdd<<<numBlocks, blockSize>>>(height, width, pA, pB, pC, A, B, C));
+  KernelMatrixAdd<<<numBlocks, blockSize>>>(height, width, pA, pB, pC, A, B, C);
 	checkCudaErrors(cudaDeviceSynchronize());
 
   for (int row = 0; row < height; ++row) {
