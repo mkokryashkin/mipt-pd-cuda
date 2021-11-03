@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 #include "KernelMul.cuh"
 
 int main() {
@@ -21,8 +22,21 @@ int main() {
 
 	int numBlocks = (numElements + blockSize - 1) / blockSize;
 
+  cudaEvent_t start;
+  cudaEvent_t stop;
+
+  cudaEventCreate(&start);
+  cudaEventCreate(&stop);
+
+  cudaEventRecord(start);
 	KernelMul<<<numBlocks, blockSize>>>(numElements, x, y, result);
+  cudaEventRecord(stop);
 	cudaDeviceSynchronize();
+  cudaEventSynchronize(stop);
+
+  float millis = 0;
+  cudaEventElapsedTime(&millis, start, stop);
+  printf("Elpased: %f\n", millis);
 
   for(int i = 0; i < numElements; ++i) {
     assert(result[i] == 6.0f);
