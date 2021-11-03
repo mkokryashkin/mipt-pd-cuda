@@ -67,6 +67,7 @@ int main() {
 
   KernelMatrixAdd<<<numBlocks, blockSize>>>(height, width, pA, pB, pC, A, B, C);
 	cudaDeviceSynchronize();
+  checkCudaErrors(cudaGetLastError());
   checkCudaErrors(cudaMemcpy2D(h_C, width * sizeof(float), C, pC, width * sizeof(float), height, cudaMemcpyDeviceToHost));
 
   PrintMatrix(h_C, width, height);
