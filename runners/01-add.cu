@@ -4,7 +4,7 @@
 
 int main() {
   int numElements = 1 << 28;
-	float *x = NULL;
+  float *x = NULL;
   float *y = NULL;
   float *result = NULL;
 
@@ -29,14 +29,15 @@ int main() {
   cudaEventCreate(&stop);
 
   cudaEventRecord(start);
-	KernelAdd<<<numBlocks, blockSize>>>(numElements, x, y, result);
+  KernelAdd<<<numBlocks, blockSize>>>(numElements, x, y, result);
   cudaEventRecord(stop);
+	cudaDeviceSynchronize();
+  cudaEventSynchronize(stop);
 
   float millis = 0;
   cudaEventElapsedTime(&millis, start, stop);
   printf("Elpased: %f\n", millis);
 
-	cudaDeviceSynchronize();
 
   for(int i = 0; i < numElements; ++i) {
     assert(result[i] == 3.0f);
