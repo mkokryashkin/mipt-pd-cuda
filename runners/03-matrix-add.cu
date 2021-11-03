@@ -35,8 +35,8 @@ void PrintMatrix(float* mat, int width, int height) {
 }
 
 int main() {
-  int width = 4;
-  int height = 4;
+  int width = 1000;
+  int height = 1000;
 
   float *h_A = new float[width * height];
   float *h_B = new float[width * height];
@@ -44,9 +44,6 @@ int main() {
 
   FillMatrix(h_A, width, height, 1.0f);
   FillMatrix(h_B, width, height, 2.0f);
-
-  PrintMatrix(h_A, width, height);
-  PrintMatrix(h_B, width, height);
 
   float *A = NULL;
   float *B = NULL;
@@ -69,8 +66,6 @@ int main() {
 	cudaDeviceSynchronize();
   checkCudaErrors(cudaGetLastError());
   checkCudaErrors(cudaMemcpy2D(h_C, width * sizeof(float), C, pC, width * sizeof(float), height, cudaMemcpyDeviceToHost));
-
-  PrintMatrix(h_C, width, height);
 
   for (int row = 0; row < height; ++row) {
     for(int col = 0; col < width; ++col) {
