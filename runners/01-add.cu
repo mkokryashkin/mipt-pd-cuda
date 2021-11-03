@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 #include "KernelAdd.cuh"
 
 int main() {
@@ -21,7 +22,20 @@ int main() {
 
 	int numBlocks = (numElements + blockSize - 1) / blockSize;
 
+  cudaEvent_t start;
+  cudaEvent_t stop;
+
+  cudaEventCreate(&start);
+  cudaEventCreate(&stop);
+
+  cudaEventRecord(start);
 	KernelAdd<<<numBlocks, blockSize>>>(numElements, x, y, result);
+  cudaEventRecord(stop);
+
+  float millis = 0;
+  cudaEventElapsedTime(&millis, start, stop);
+  printf("Elpased: %f\n", millis);
+
 	cudaDeviceSynchronize();
 
   for(int i = 0; i < numElements; ++i) {
