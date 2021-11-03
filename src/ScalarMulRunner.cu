@@ -26,7 +26,6 @@ __global__ void Reduce(float* in_data, float* out_data) {
 
 
 float ScalarMulTwoReductions(int numElements, float* vector1, float* vector2, int blockSize) {
-  int blockSize = 1024;
   int numBlocks = (numElements + blockSize - 1) / blockSize;
 
   float *vec1_d = NULL;
@@ -44,7 +43,7 @@ float ScalarMulTwoReductions(int numElements, float* vector1, float* vector2, in
   cudaMemcpy(vec1_d, vector1, numElements * sizeof(float), cudaMemcpyHostToDevice);
   cudaMemcpy(vec2_d, vector2, numElements * sizeof(float), cudaMemcpyHostToDevice);
 
-	KernelMul<<<numBlocks, blockSize>>>(numElements, x, y, result);
+	KernelMul<<<numBlocks, blockSize>>>(numElements, vec1_d, vec2_d, result_d);
 	cudaDeviceSynchronize();
   Reduce<<<numBlocks, blockSize, numElements * sizeof(float)>>>(result_d, reduce1_d);
 	cudaDeviceSynchronize();
