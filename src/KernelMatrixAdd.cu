@@ -7,11 +7,11 @@ __global__ void KernelMatrixAdd(int height, int width, size_t pA, size_t pB, siz
 	int stride_row = blockDim.x * gridDim.x;
 	int stride_col = blockDim.y * gridDim.y;
 
+  assert(false);
   for (int i = row; i < height; i += stride_row) {
     float* rowA = (float*)((char*)A + i * pA);
     float* rowB = (float*)((char*)B + i * pB);
     float* rowC = (float*)((char*)result + i * pC);
-    assert(false);
 
     for(int j = col; j < width; j += stride_col) {
       assert(rowA[j] == 1.0f);
