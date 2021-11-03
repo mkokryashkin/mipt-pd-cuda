@@ -1,7 +1,7 @@
 #include <CommonKernels.cuh>
 
-__global__ void Reduce(int* in_data, int* out_data) {
-    extern __shared__ int shared_data[];
+__global__ void Reduce(float* in_data, float* out_data) {
+    extern __shared__ float shared_data[];
 
     unsigned int tid = threadIdx.x;
     unsigned int index = blockIdx.x * blockDim.x + threadIdx.x;
