@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <MatrixVectorMul.cuh>
 
+const float TOLERANCE = 0.001f;
+
 void FillMatrix(float* mat, int width, int height, float value) {
   for(int row = 0; row < height; ++row) {
     for(int col = 0; col < width; ++col) {
@@ -44,7 +46,7 @@ int main() {
   cudaMemcpy(h_res, res, width * sizeof(float), cudaMemcpyDeviceToHost);
 
   for (int row = 0; row < width; ++row) {
-    assert(h_res[row] == 1001000.0f);
+    assert(h_res[row] - 1001000.0f < TOLERANCE);
   }
 
   cudaFree(A);
