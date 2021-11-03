@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 #include "KernelMatrixAdd.cuh"
 
 void FillMatrix(float* mat, int width, int height, float value) {
@@ -9,9 +10,20 @@ void FillMatrix(float* mat, int width, int height, float value) {
   }
 }
 
+void PrintMatrix(float* mat, int width, int height) {
+  for(int row = 0; row < height; ++row) {
+    for(int col = 0; col < width; ++col) {
+      printf("%f ", mat[row * width + col]);
+    }
+    printf("\n");
+  }
+  printf("\n");
+  fflush(stdout);
+}
+
 int main() {
-  int width = 10000;
-  int height = 10000;
+  int width = 4;
+  int height = 4;
 
   float *h_A = new float[width * height];
   float *h_B = new float[width * height];
@@ -19,6 +31,9 @@ int main() {
 
   FillMatrix(h_A, width, height, 1.0f);
   FillMatrix(h_B, width, height, 2.0f);
+
+  PrintMatrix(h_A, width, height);
+  PrintMatrix(h_B, width, height);
 
   float *A = NULL;
   float *B = NULL;
@@ -49,6 +64,8 @@ int main() {
     float* rowC = (float*)((char*)C + row * pC);
     cudaMemcpy(h_C + row * width, rowC, width * sizeof(float), cudaMemcpyDeviceToHost);
   }
+
+  PrintMatrix(h_C, width, height);
 
   for (int row = 0; row < height; ++row) {
     for(int col = 0; col < width; ++col) {
