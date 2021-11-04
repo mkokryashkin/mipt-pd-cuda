@@ -61,9 +61,22 @@ int main() {
 
   dim3 blockSize(32, 32);
   dim3 numBlocks((height + blockSize.x - 1) / blockSize.x, (width + blockSize.y - 1) / blockSize.y);
+  cudaEvent_t start;
+  cudaEvent_t stop;
+
+  cudaEventCreate(&start);
+  cudaEventCreate(&stop);
+
+  cudaEventRecord(start);
 
   KernelMatrixAdd<<<numBlocks, blockSize>>>(height, width, pA, pB, pC, A, B, C);
 	cudaDeviceSynchronize();
+  cudaEventRecord(stop);
+  cudaEventSynchronize(stop);
+
+  float millis = 0;
+  cudaEventElapsedTime(&millis, start, stop);
+  printf("Elpased: %f\n", millis);
   checkCudaErrors(cudaGetLastError());
   checkCudaErrors(cudaMemcpy2D(h_C, width * sizeof(float), C, pC, width * sizeof(float), height, cudaMemcpyDeviceToHost));
 
